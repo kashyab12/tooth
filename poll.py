@@ -60,8 +60,9 @@ class Device1ServiceObject:
     trusted: bool
     uuids: List[str]
 
+def get_connected_devices(all_devs: List[Device1ServiceObject]):
+    return list(filter(lambda dev: dev.connected, all_devs))
 
-dev = QBluetoothLocalDevice()
 sys_bus = QDBusConnection.systemBus()
 manager = QDBusInterface('org.bluez', "/", "org.freedesktop.DBus.ObjectManager", sys_bus)
 reply = manager.call("GetManagedObjects")
@@ -83,8 +84,4 @@ for obj_path, ifaces in ble_obj_paths.items():
                                   )
     if bl_dev.trusted: connected_bl_devs.append(bl_dev)
     
-pprint(connected_bl_devs)
-
-for conn_dev in dev.connectedDevices():
-    # print(conn_dev.toString())
-    ...
+pprint(get_connected_devices(connected_bl_devs))
