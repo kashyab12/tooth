@@ -3,6 +3,8 @@ from pprint import pprint
 from dataclasses import dataclass
 from typing import List
 from enum import StrEnum
+from bleak import BleakScanner
+import asyncio
 
 class BluezAdapter1Keys(StrEnum):
     interface = "org.bluez.Adapter1"
@@ -86,9 +88,12 @@ def get_devices_history():
     
     return connected_bl_devs
 
-def poll_devices(all_devs, connected_devs):
-    not_connected_devices = [dev for dev in all_devs if dev not in connected_devs]
-    discovery_agent = QBluetoothDeviceDiscoveryAgent()
-    print(discovery_agent.lowEnergyDiscoveryTimeout())
-    discovery_agent.start()
-    return discovery_agent.discoveredDevices()
+async def scan_devices():
+    stop_event = asyncio.Event()
+    def callback(device, adv_data):
+        print(device)
+        print(adv_data)
+    async with BleakScanner(callback) as scanner:
+        await stop_event.wait()
+        
+asyncio.run(scan_devices())
