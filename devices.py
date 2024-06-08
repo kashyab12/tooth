@@ -1,4 +1,3 @@
-from PyQt6.QtBluetooth import QBluetoothDeviceInfo, QBluetoothLocalDevice
 from PyQt6.QtDBus import QDBusConnection, QDBusInterface, QDBusMessage
 from pprint import pprint
 from dataclasses import dataclass
@@ -88,8 +87,8 @@ def get_devices_history():
     return connected_bl_devs
 
 def poll_devices(all_devs, connected_devs):
-    ...
-
-all_devs = get_devices_history()
-connected_devs = get_connected_devices(all_devs)
-dev_to_pair = poll_devices(all_devs, connected_devs)
+    not_connected_devices = [dev for dev in all_devs if dev not in connected_devs]
+    discovery_agent = QBluetoothDeviceDiscoveryAgent()
+    print(discovery_agent.lowEnergyDiscoveryTimeout())
+    discovery_agent.start()
+    return discovery_agent.discoveredDevices()
