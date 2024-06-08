@@ -88,12 +88,17 @@ def get_devices_history():
     
     return connected_bl_devs
 
-async def scan_devices():
+async def scan_devices(not_connected_devices: List[Device1ServiceObject]):
     stop_event = asyncio.Event()
     def callback(device, adv_data):
+        if adv_data is None: return
         print(device)
-        print(adv_data)
+        if any(device.address == history_dev.address for history_dev in not_connected_devices): 
+            print(f"Inside: {device}")
     async with BleakScanner(callback) as scanner:
         await stop_event.wait()
-        
-asyncio.run(scan_devices())
+
+all_devices = get_devices_history()
+connected_devices = get_connected_devices(all_devices)
+not_connected_devices = [history_dev for history_dev in all_devices if history_dev not in connected_devices]
+asyncio.run(scan_devices(not_connected_devices))

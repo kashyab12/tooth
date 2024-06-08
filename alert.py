@@ -14,6 +14,8 @@ app = QApplication(sys.argv)
 
 window = QMessageBox()
 window.show()  # IMPORTANT!!!!! Windows are hidden by default.
-discover = DiscoveryAgent(get_devices_history(), get_connected_devices)
+all_devices = get_devices_history()
+connected_devices = get_connected_devices(all_devices)
+discover = DiscoveryAgent(all_devices, connected_devices)
 # Start the event loop.
 app.exec()
